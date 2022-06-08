@@ -94,6 +94,7 @@ The client receiving it, unwraps it and is able to save the secret key for the c
 To stop the connection, type Exit on the client side and both will stop.
 
 **Acknowledgments**
+
 Revisions: Diogo Peres Castilho, David R. Matos, Miguel Pardal, Ricardo Chaves
 
 Second Revisions: Diogo Fernandes, Guilherme Santos, Pedro Ferreira, Lucas Figueiredo, João Pereira
