@@ -11,6 +11,7 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
+import java.util.Base64;
 
 import java.io.*;
 
@@ -53,7 +54,18 @@ public class Server     {
 
             String wrappedString = new String(wrappedKey);
 
-            System.out.println("Sent wrapped key: " + wrappedString);
+
+            byte[] byte_simkey = secretKey.getEncoded();
+            String str_simkey = Base64.getEncoder().encodeToString(byte_simkey);
+
+            byte[] byte_pubkey = clientPublicKey.getEncoded();
+            String str_pubkey = Base64.getEncoder().encodeToString(byte_pubkey);
+
+            System.out.println("Encoding simetric key: " + str_simkey + "\n");
+            System.out.println("Using client public key: " + str_pubkey + "\n");
+
+            //System.out.println("Sent wrapped key: " + wrappedString);
+
 
 
             // reads message from client until "Exit" is sent
@@ -62,7 +74,8 @@ public class Server     {
                     int encryptedSize = in.readInt();
                     byte[] encryptedKey = in.readNBytes(encryptedSize);
                     String encryptedString = new String(encryptedKey);
-                    System.out.println("Received encrypted message: " + encryptedString);
+                    System.out.println("Received encrypted message: " + Base64.getEncoder().encodeToString(encryptedKey));
+                    //System.out.println("Received encrypted message: " + encryptedString);
                     line = Crypto.decrypt(encryptedKey, secretKey);
                     System.out.println(line);
                 }

@@ -7,6 +7,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.io.*;
 import java.util.Scanner;
+import java.util.Base64;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -52,9 +53,20 @@ public class Client     {
 
         String wrappedString = new String(wrappedKey);
 
-        System.out.println("Received wrapped key: " + wrappedString);
+        //System.out.println("Received wrapped key: " + wrappedString);
 
         SecretKey secretKey = (SecretKey) Crypto.unWrapKey(clientPrivateKey, wrappedKey);
+
+
+        byte[] byte_simkey = secretKey.getEncoded();
+        String str_simkey = Base64.getEncoder().encodeToString(byte_simkey);
+
+        byte[] byte_prikey = clientPrivateKey.getEncoded();
+        String str_prikey = Base64.getEncoder().encodeToString(byte_prikey);
+
+        System.out.println("Decoding simetric key: " + str_simkey + "\n");
+        System.out.println("Using client private key: " + str_prikey + "\n");
+
 
         String line = "";
         byte[] encryptedLine = null;
@@ -67,7 +79,8 @@ public class Client     {
                 out.writeInt(encryptedLine.length);
                 out.write(encryptedLine);
                 String encryptedString = new String(encryptedLine);
-                System.out.println("Sent encrypted message: " + encryptedString);
+                //System.out.println("Sent encrypted message: " + encryptedString);
+                System.out.println("Sent encrypted message: " + Base64.getEncoder().encodeToString(encryptedLine));
             }
             catch(IOException i)    {
                 System.out.println(i);
