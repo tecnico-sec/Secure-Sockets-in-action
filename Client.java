@@ -51,9 +51,6 @@ public class Client     {
         int keySize = in.readInt();
         byte []wrappedKey = in.readNBytes(keySize);
 
-        String wrappedString = new String(wrappedKey);
-
-        //System.out.println("Received wrapped key: " + wrappedString);
 
         SecretKey secretKey = (SecretKey) Crypto.unWrapKey(clientPrivateKey, wrappedKey);
 
@@ -64,7 +61,7 @@ public class Client     {
         byte[] byte_prikey = clientPrivateKey.getEncoded();
         String str_prikey = Base64.getEncoder().encodeToString(byte_prikey);
 
-        System.out.println("Decoding simetric key: " + str_simkey + "\n");
+        System.out.println("Decoding secret key: " + str_simkey + "\n");
         System.out.println("Using client private key: " + str_prikey + "\n");
 
 
@@ -78,9 +75,7 @@ public class Client     {
                 encryptedLine = Crypto.encrypt(line, secretKey);
                 out.writeInt(encryptedLine.length);
                 out.write(encryptedLine);
-                String encryptedString = new String(encryptedLine);
-                //System.out.println("Sent encrypted message: " + encryptedString);
-                System.out.println("Sent encrypted message: " + Base64.getEncoder().encodeToString(encryptedLine));
+                System.out.println("Sent encrypted message: " + Base64.getEncoder().encodeToString(encryptedLine) + "\n");
             }
             catch(IOException i)    {
                 System.out.println(i);

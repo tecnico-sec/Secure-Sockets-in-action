@@ -52,32 +52,23 @@ public class Server     {
             out.writeInt(wrappedKey.length);
             out.write(wrappedKey);
 
-            String wrappedString = new String(wrappedKey);
-
-
             byte[] byte_simkey = secretKey.getEncoded();
             String str_simkey = Base64.getEncoder().encodeToString(byte_simkey);
 
             byte[] byte_pubkey = clientPublicKey.getEncoded();
             String str_pubkey = Base64.getEncoder().encodeToString(byte_pubkey);
 
-            System.out.println("Encoding simetric key: " + str_simkey + "\n");
+            System.out.println("Encoding secret key: " + str_simkey + "\n");
             System.out.println("Using client public key: " + str_pubkey + "\n");
 
-            //System.out.println("Sent wrapped key: " + wrappedString);
-
-
-
             // reads message from client until "Exit" is sent
-            while (!line.equals("Exit"))    { //Not sure Se continua assim
+            while (!line.equals("Exit"))    { 
                 try     {
                     int encryptedSize = in.readInt();
                     byte[] encryptedKey = in.readNBytes(encryptedSize);
-                    String encryptedString = new String(encryptedKey);
                     System.out.println("Received encrypted message: " + Base64.getEncoder().encodeToString(encryptedKey));
-                    //System.out.println("Received encrypted message: " + encryptedString);
                     line = Crypto.decrypt(encryptedKey, secretKey);
-                    System.out.println(line);
+                    System.out.println(line + "\n");
                 }
                 catch(IOException i)    {
                     System.out.println(i);
