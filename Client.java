@@ -50,6 +50,10 @@ public class Client     {
         int keySize = in.readInt();
         byte []wrappedKey = in.readNBytes(keySize);
 
+        String wrappedString = new String(wrappedKey);
+
+        System.out.println("Received wrapped key: " + wrappedString);
+
         SecretKey secretKey = (SecretKey) Crypto.unWrapKey(clientPrivateKey, wrappedKey);
 
         String line = "";
@@ -62,6 +66,8 @@ public class Client     {
                 encryptedLine = Crypto.encrypt(line, secretKey);
                 out.writeInt(encryptedLine.length);
                 out.write(encryptedLine);
+                String encryptedString = new String(encryptedLine);
+                System.out.println("Sent encrypted message: " + encryptedString);
             }
             catch(IOException i)    {
                 System.out.println(i);

@@ -86,24 +86,6 @@ public class Crypto {
                     e);
         }
     }
-/* 
-    public static byte[] encrypt(String algorithm, String input, SecretKey key) throws NoSuchPaddingException, NoSuchAlgorithmException,
-        InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
-        
-        Cipher cipher = Cipher.getInstance(algorithm);
-        cipher.init(Cipher.ENCRYPT_MODE, key);
-        byte[] cipherText = cipher.doFinal(input.getBytes());
-        return cipherText;
-    }
-
-    public static String decrypt(String algorithm, byte[] cipherText, SecretKey key) throws NoSuchPaddingException, NoSuchAlgorithmException, 
-        InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
-
-        Cipher cipher = Cipher.getInstance(algorithm);
-        cipher.init(Cipher.DECRYPT_MODE, key);
-        byte[] plainText = cipher.doFinal(cipherText);
-        return new String(plainText);
-    }*/
 
     public static byte[] encrypt(String input, SecretKey key) throws NoSuchPaddingException, NoSuchAlgorithmException,
     InvalidAlgorithmParameterException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {

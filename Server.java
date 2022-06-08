@@ -42,6 +42,8 @@ public class Server     {
             //Generating the secret Key for connection
             SecretKey secretKey = Crypto.generate(256);
 
+            System.out.println("Created secret key");
+
             //secretKey wrapped with client pub key
             byte[] wrappedKey = Crypto.wrapKey(clientPublicKey, secretKey);
 
@@ -49,11 +51,18 @@ public class Server     {
             out.writeInt(wrappedKey.length);
             out.write(wrappedKey);
 
+            String wrappedString = new String(wrappedKey);
+
+            System.out.println("Sent wrapped key: " + wrappedString);
+
+
             // reads message from client until "Exit" is sent
             while (!line.equals("Exit"))    { //Not sure Se continua assim
                 try     {
                     int encryptedSize = in.readInt();
                     byte[] encryptedKey = in.readNBytes(encryptedSize);
+                    String encryptedString = new String(encryptedKey);
+                    System.out.println("Received encrypted message: " + encryptedString);
                     line = Crypto.decrypt(encryptedKey, secretKey);
                     System.out.println(line);
                 }
