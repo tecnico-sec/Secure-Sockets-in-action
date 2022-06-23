@@ -117,15 +117,15 @@ openssl pkcs12 -export -in user.crt -inkey user.key -out user.p12
 
 #### Import the certificate
 
-Now you will add to the jks file of the client the certificate of the server so he trusts that server.
+Now you will add to the jks file of the user the certificate of the server so he trusts that server.
 
 ```bash
 keytool -import -trustcacerts -file server.pem -keypass password -storepass password -keystore usertruststore.jks
 ```
 
-## Connecting the client to the server
+## Connecting the user to the server
 
-Now that we have compiled and created a certificate for both client, we can try make a secure socket connection with the server.
+Now that we have compiled and created a certificate for both user, we can try make a secure socket connection with the server.
 To do this we first start the server:
 
 ```bash
@@ -137,7 +137,7 @@ In this case, the current directory is specified as classpath.
 
 MP - server starts without keys and without errors for this case
 
-The server is now waiting for a client to connect, to do this we start the client (on a new terminal but in the same folder):
+The server is now waiting for a user to connect, to do this we start the user (on a new terminal but in the same folder):
 
 ```bash
 java -cp . User 5001
@@ -151,9 +151,9 @@ Now try using the correct port (you will need to restart the server):
 java -cp . User 5000
 ```
 
-The connection should fail again, what happened this time was that the certificate of the client wasn't sent to the server. If you were trying to open a website what should appear is [this](https://client-cert-missing.badssl.com/).
+The connection should fail again, what happened this time was that the certificate of the user wasn't sent to the server. If you were trying to open a website what should appear is [this](https://client-cert-missing.badssl.com/).
 
-So now try adding the user certificate to the server jks so he can trust the client:
+So now try adding the user certificate to the server jks so he can trust the user:
 
 ```bash
 keytool -import -trustcacerts -file user.pem -keypass password -storepass password -keystore servertruststore.jks
