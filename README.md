@@ -48,13 +48,13 @@ The goal now is to use asymmetric ciphers, with separate private and public keys
 
 #### Generating a pair of keys with OpenSSL
 
-Generate the key pair:
+Generate the server key pair:
 
 ```bash
 openssl genrsa -out server.key
 ```
 
-Now create a key for the user:
+Now create the keys for the user:
 
 ```bash
 openssl genrsa -out user.key
@@ -117,15 +117,15 @@ openssl pkcs12 -export -in user.crt -inkey user.key -out user.p12
 
 #### Import the certificate
 
-Now you will add to the jks file of the server the certificate of the client so he trusts that client.
+Now you will add to the jks file of the user the certificate of the server so he trusts that server.
 
 ```bash
-keytool -import -trustcacerts -file user.pem -keypass password -storepass password -keystore servertruststore.jks
+keytool -import -trustcacerts -file server.pem -keypass password -storepass password -keystore usertruststore.jks
 ```
 
-## Connecting the client to the server
+## Connecting the user to the server
 
-Now that we have compiled and created a certificate for both client, we can try make a secure socket connection with the server.
+Now that we have compiled and created a certificate for both user, we can try make a secure socket connection with the server.
 To do this we first start the server:
 
 ```bash
@@ -137,13 +137,13 @@ In this case, the current directory is specified as classpath.
 
 MP - server starts without keys and without errors for this case
 
-The server is now waiting for a client to connect to do this we start the client (on a new terminal but in the same folder):
+The server is now waiting for a user to connect, to do this we start the user (on a new terminal but in the same folder):
 
 ```bash
 java -cp . User 5001
 ```
 
-The connection should fail that's because the port that is being used is wrong, what should appear if you were trying to open a website is [this](https://wrong.host.badssl.com/)
+The connection should fail because the port that is being used is wrong, what should appear if you were trying to open a website is [this](https://wrong.host.badssl.com/).
 
 Now try using the correct port (you will need to restart the server):
 
@@ -151,12 +151,12 @@ Now try using the correct port (you will need to restart the server):
 java -cp . User 5000
 ```
 
-The connection should fail again, what happened this time was that certificate of the client wasn't sent to the server. If you were trying to open a website what should appear is [this](https://client-cert-missing.badssl.com/)
+The connection should fail again, what happened this time was that the certificate of the user wasn't sent to the server. If you were trying to open a website what should appear is [this](https://client-cert-missing.badssl.com/).
 
-So now try adding the server certificate to the user jks so he can trust the server
+So now try adding the user certificate to the server jks so he can trust the user:
 
 ```bash
-keytool -import -trustcacerts -file server.pem -keypass password -storepass password -keystore usertruststore.jks
+keytool -import -trustcacerts -file user.pem -keypass password -storepass password -keystore servertruststore.jks
 ```
 
 Try connecting both of them with each other using this commands.
@@ -173,8 +173,8 @@ User:
 java -cp . User 5000
 ```
 
-The connection should work and the message should be sent.
-What you should see when trying to open a website is [this](https://https-everywhere.badssl.com/)
+The connection should work and a message should be sent.
+What you should see when trying to open a website is [this](https://https-everywhere.badssl.com/).
 
 
 MP - if the client and server already share a secret key, why do they need the public keys?
