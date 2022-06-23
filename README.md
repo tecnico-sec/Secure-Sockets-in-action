@@ -6,14 +6,15 @@ Instituto Superior Técnico, Universidade de Lisboa
 
 ## Goals
 
-- Create a public and private key
-- Use the keys created to make a secure connection between a server and a client
+- Create a server and user key
+- Use the keys create certificates
+- Use those to create a secure channel
 
 ## Introduction
 
-This laboratory assignment uses Java Development Kit (JDK) version 7 or later, running on Linux. 
+This laboratory assignment uses Java Development Kit (JDK) version 7 or later, running on Linux.
 The Java platform strongly emphasizes security, including language safety, cryptography, public key infrastructure, secure communication, authentication and access control.
-In this laboratory we use [OpenSSL](https://www.openssl.org/) to create keys. And use those same keys to create a secure connection.
+In this laboratory we use [OpenSSL](https://www.openssl.org/) to create keys and the certificate, and then use the Java implementationof TLS/SSL to create a secure channel for communication.
 
 MP - no, the goal was to create the keys, then the certificate, and then use the Java implementation of TLS/SSL or HTTPS.  
 See `javax.net.ssl.SSLSocketFactory`
@@ -53,37 +54,92 @@ Generate the key pair:
 openssl genrsa -out server.key
 ```
 
-Save the public key:
+Save the public key of the server:
 
 ```bash
-openssl rsa -in server.key -pubout > public.key
+openssl rsa -in server.key -pubout > publicserver.key
 ```
 
-#### Reading the generated pair of keys with Java
-
-To read the generated keys in Java it is necessary to convert them to the right format.
-
-Convert server.key to .pem
+Now create a key for the user:
 
 ```bash
-openssl rsa -in server.key -text > private_key.pem
+openssl genrsa -out user.key
 ```
 
-Convert private Key to PKCS#8 format (so Java can read it)
+Save the public key of the user:
 
 ```bash
-openssl pkcs8 -topk8 -inform PEM -outform DER -in private_key.pem -out private_key.der -nocrypt
+openssl rsa -in user.key -pubout > publicuser.key
 ```
 
-Output public key portion in DER format (so Java can read it)
+#### Generating a self-signed certificate
+
+Create a Certificate Signing Request, using same key (when asked for password use the word "password"):
 
 ```bash
-openssl rsa -in private_key.pem -pubout -outform DER -out public_key.der
+openssl req -new -key server.key -out server.csr
+```
+
+```bash
+openssl req -new -key user.key -out user.csr
+```
+
+```bash
+openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt
+```
+
+For our certificate to be able to sign other certificates, OpenSSL requires that a database exists (a .srl file). Create it:
+
+```bash
+echo 01 > server.srl
+```
+
+```bash
+echo 01 > user.srl
+```
+
+Self-sign for the user doesn't happen and is replaced by:
+
+```bash
+openssl x509 -req -days 365 -in user.csr -CA server.crt -CAkey server.key -out user.crt
+```
+
+#### Convert certificate
+
+For Java to be able to read the certificates that were created is necessary to convert them to the right format.
+
+```bash
+openssl x509 -in server.crt -out server.pem
+```
+
+```bash
+openssl x509 -in user.crt -out user.pem
+```
+
+####Create a p12 file
+
+With the certificates and the keys we created, we can use them to create a p12 file (password should be "password").
+A p12 file contains a digital certificate that uses PKCS#12 (Public Key Cryptography Standard #12) encryption.
+
+```bash
+openssl pkcs12 -export -in server.crt -inkey server.key -out server.p12
+```
+
+```bash
+openssl pkcs12 -export -in user.crt -inkey user.key -out user.p12
+```
+
+####Import the certificate
+
+Now you will add to the jks file of the server the certificate of the client so he trusts that client.
+
+```bash
+keytool -import -trustcacerts -file user.pem -keypass password -storepass password -keystore servertruststore.jks
 ```
 
 ## Connecting the client to the server
 
-Now that we have compiled and created a public and a private key, we can make a secure socket connection with the server.
+Now that we have compiled and created a certificate for both client, we can try make a secure socket connection with the server.
 To do this we first start the server:
 
 ```bash
@@ -98,16 +154,42 @@ MP - server starts without keys and without errors for this case
 The server is now waiting for a client to connect to do this we start the client (on a new terminal but in the same folder):
 
 ```bash
-java -cp . Client
+java -cp . User 5001
 ```
 
-The connection should start, you can type in the client and will appear on the server the same message.
-Although the connection seems normal, it is being encrypted with a secret key shared only by those 2.
-This secret key is shared to the client by the server, with him wrapping the secret key with the public key generated above, and sending this wrapped key to the client.
-The client receiving it, unwraps it and is able to save the secret key for the connection.
-Now every mesage sent by the client to the server is encrypted with this secret key.
+The connection should fail that's because the port that is being used is wrong, what should appear if you were trying to open a website is [this](https://wrong.host.badssl.com/)
 
-To stop the connection, type Exit on the client side and both will stop.
+Now try using the correct port (you will need to restart the server):
+
+```bash
+java -cp . User 5000
+```
+
+The connection should fail again, what happened this time was that certificate of the client wasn't sent to the server. If you were trying to open a website what should appear is [this](https://client-cert-missing.badssl.com/)
+
+So now try adding the server certificate to the user jks so he can trust the server
+
+```bash
+keytool -import -trustcacerts -file server.pem -keypass password -storepass password -keystore usertruststore.jks
+```
+
+Try connecting both of them with each other using this commands.
+
+Server:
+
+```bash
+java -cp . Server
+```
+
+User:
+
+```bash
+java -cp . User 5000
+```
+
+The connection should work and the message should be sent.
+What you should see when trying to open a website is [this](https://https-everywhere.badssl.com/)
+
 
 MP - if the client and server already share a secret key, why do they need the public keys?
 Usually, in asymmetric crypto, the public keys are known and used to exchange a generated secret key.
