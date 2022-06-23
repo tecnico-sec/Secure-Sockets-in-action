@@ -20,11 +20,11 @@ public class Server {
             listener.setEnabledProtocols(new String[] { "TLSv1.3" });
             System.out.println("listening for messages...");
             try (Socket socket = listener.accept()) {
-                
+
                 InputStream is = new BufferedInputStream(socket.getInputStream());
                 byte[] data = new byte[2048];
                 int len = is.read(data);
-                
+
                 String message = new String(data, 0, len);
                 OutputStream os = new BufferedOutputStream(socket.getOutputStream());
                 System.out.printf("server received %d bytes: %s%n", len, message);
@@ -38,7 +38,7 @@ public class Server {
     public static void main(String args[]) throws IOException {
         System.setProperty("javax.net.ssl.keyStore", "server.p12");
         System.setProperty("javax.net.ssl.keyStorePassword", "password");
-        System.setProperty("javax.net.ssl.trustStore", "servertruststore1.jks");
+        System.setProperty("javax.net.ssl.trustStore", "servertruststore.jks");
         System.setProperty("javax.net.ssl.trustStorePassword", "password");
         startServer(5000);
     }

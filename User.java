@@ -14,16 +14,16 @@ public class User {
 
         SocketFactory factory = SSLSocketFactory.getDefault();
         try (SSLSocket socket = (SSLSocket) factory.createSocket(host, port)) {
-            
+
             socket.setEnabledCipherSuites(new String[] { "TLS_AES_128_GCM_SHA256" });
             socket.setEnabledProtocols(new String[] { "TLSv1.3" });
-            
+
             String message = "This is a secure channel!";
             System.out.println("sending message: " + message);
             OutputStream os = new BufferedOutputStream(socket.getOutputStream());
             os.write(message.getBytes());
             os.flush();
-            
+
             InputStream is = new BufferedInputStream(socket.getInputStream());
             byte[] data = new byte[2048];
             int len = is.read(data);
@@ -32,9 +32,9 @@ public class User {
     }
 
     public static void main(String args[]) throws IOException {
-        System.setProperty("javax.net.ssl.keyStore", "client.p12");
+        System.setProperty("javax.net.ssl.keyStore", "user.p12");
         System.setProperty("javax.net.ssl.keyStorePassword", "password");
-        System.setProperty("javax.net.ssl.trustStore", "clienttruststore.jks");
+        System.setProperty("javax.net.ssl.trustStore", "usertruststore.jks");
         System.setProperty("javax.net.ssl.trustStorePassword", "password");
         if (args.length == 1 ) {
             int port = Integer.parseInt(args[0]);

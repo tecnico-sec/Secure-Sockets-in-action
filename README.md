@@ -54,22 +54,10 @@ Generate the key pair:
 openssl genrsa -out server.key
 ```
 
-Save the public key of the server:
-
-```bash
-openssl rsa -in server.key -pubout > publicserver.key
-```
-
 Now create a key for the user:
 
 ```bash
 openssl genrsa -out user.key
-```
-
-Save the public key of the user:
-
-```bash
-openssl rsa -in user.key -pubout > publicuser.key
 ```
 
 #### Generating a self-signed certificate
@@ -84,6 +72,8 @@ openssl req -new -key server.key -out server.csr
 openssl req -new -key user.key -out user.csr
 ```
 
+Self-sign:
+
 ```bash
 openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt
 ```
@@ -92,10 +82,6 @@ For our certificate to be able to sign other certificates, OpenSSL requires that
 
 ```bash
 echo 01 > server.srl
-```
-
-```bash
-echo 01 > user.srl
 ```
 
 Self-sign for the user doesn't happen and is replaced by:
@@ -116,7 +102,7 @@ openssl x509 -in server.crt -out server.pem
 openssl x509 -in user.crt -out user.pem
 ```
 
-####Create a p12 file
+#### Create a p12 file
 
 With the certificates and the keys we created, we can use them to create a p12 file (password should be "password").
 A p12 file contains a digital certificate that uses PKCS#12 (Public Key Cryptography Standard #12) encryption.
@@ -129,7 +115,7 @@ openssl pkcs12 -export -in server.crt -inkey server.key -out server.p12
 openssl pkcs12 -export -in user.crt -inkey user.key -out user.p12
 ```
 
-####Import the certificate
+#### Import the certificate
 
 Now you will add to the jks file of the server the certificate of the client so he trusts that client.
 
