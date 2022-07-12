@@ -3,6 +3,7 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Scanner;
 
 import javax.net.SocketFactory;
 import javax.net.ssl.SSLSocket;
@@ -28,6 +29,40 @@ public class User {
             byte[] data = new byte[2048];
             int len = is.read(data);
             System.out.printf("client received %d bytes: %s%n", len, new String(data, 0, len));
+
+            String line = "";
+            try (Scanner scanner = new Scanner(System.in)) {
+                System.out.println("Type: 'Exit' to close the connection");
+
+                while(!line.equals("Exit")) {
+                    try {
+                        line = scanner.nextLine();;
+                        System.out.println("sending message: " + line);
+                        os = new BufferedOutputStream(socket.getOutputStream());
+                        os.write(line.getBytes());
+                        os.flush();
+
+                        is = new BufferedInputStream(socket.getInputStream());
+                        data = new byte[2048];
+                        len = is.read(data);
+                        System.out.printf("client received %d bytes: %s%n", len, new String(data, 0, len));
+                    } catch (IOException i) {
+                        System.out.println(i);
+                        return;
+                    }
+                }
+                try {
+                    scanner.close();
+                    is.close();
+                    os.close();
+                    socket.close();
+                } catch (IOException i) {
+                    System.out.println(i);
+                    return;
+                }
+            }
+
+
         }
     }
 

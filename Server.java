@@ -19,18 +19,36 @@ public class Server {
             listener.setEnabledCipherSuites(new String[] { "TLS_AES_128_GCM_SHA256" });
             listener.setEnabledProtocols(new String[] { "TLSv1.3" });
             System.out.println("listening for messages...");
+            String message = "";
+            InputStream is = null;
+            OutputStream os = null;
             try (Socket socket = listener.accept()) {
 
-                InputStream is = new BufferedInputStream(socket.getInputStream());
-                byte[] data = new byte[2048];
-                int len = is.read(data);
+                while(!message.equals("Exit")) {
+                    try {
+                        is = new BufferedInputStream(socket.getInputStream());
+                        byte[] data = new byte[2048];
+                        int len = is.read(data);
 
-                String message = new String(data, 0, len);
-                OutputStream os = new BufferedOutputStream(socket.getOutputStream());
-                System.out.printf("server received %d bytes: %s%n", len, message);
-                String response = message + " processed by server";
-                os.write(response.getBytes(), 0, response.getBytes().length);
-                os.flush();
+                        message = new String(data, 0, len);
+                        os = new BufferedOutputStream(socket.getOutputStream());
+                        System.out.printf("server received %d bytes: %s%n", len, message);
+                        String response = message + " processed by server";
+                        os.write(response.getBytes(), 0, response.getBytes().length);
+                        os.flush();
+                    } catch (IOException i) {
+                        System.out.println(i);
+                        return;
+                    }
+                }
+                try {
+                    is.close();
+                    os.close();
+                    socket.close();
+                } catch (IOException i) {
+                    System.out.println(i);
+                    return;
+                }
             }
         }
     }

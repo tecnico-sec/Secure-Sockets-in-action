@@ -16,11 +16,6 @@ This laboratory assignment uses Java Development Kit (JDK) version 7 or later, r
 The Java platform strongly emphasizes security, including language safety, cryptography, public key infrastructure, secure communication, authentication and access control.
 In this laboratory we use [OpenSSL](https://www.openssl.org/) to create keys and the certificate, and then use the Java implementationof TLS/SSL to create a secure channel for communication.
 
-MP - no, the goal was to create the keys, then the certificate, and then use the Java implementation of TLS/SSL or HTTPS.  
-See `javax.net.ssl.SSLSocketFactory`
-
-MP - the current solution uses the same constant IV, which is wrong.
-
 ## Setup
 To try to make the connection work, you will need a few steps:
 
@@ -134,8 +129,6 @@ java -cp . Server
 
 The `cp` option specifies the *classpath*, i.e., where to look for the Java class files.
 In this case, the current directory is specified as classpath.
-
-MP - server starts without keys and without errors for this case
 
 The server is now waiting for a user to connect, to do this we start the user (on a new terminal but in the same folder):
 
