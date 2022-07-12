@@ -170,10 +170,6 @@ The connection should work and a message should be sent.
 What you should see when trying to open a website is [this](https://https-everywhere.badssl.com/).
 
 
-MP - if the client and server already share a secret key, why do they need the public keys?
-Usually, in asymmetric crypto, the public keys are known and used to exchange a generated secret key.
-This is what SSL\TLS does.
-
 **Acknowledgments**
 
 Revisions: Diogo Peres Castilho, David R. Matos, Miguel Pardal, Ricardo Chaves
