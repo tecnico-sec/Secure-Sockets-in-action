@@ -166,7 +166,7 @@ User:
 java -cp . User 5000
 ```
 
-The connection should work and a message should be sent.
+The connection should work and messages can now be sent.
 What you should see when trying to open a website is [this](https://https-everywhere.badssl.com/).
 
 
