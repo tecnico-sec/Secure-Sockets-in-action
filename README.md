@@ -7,7 +7,7 @@ Instituto Superior Técnico, Universidade de Lisboa
 ## Goals
 
 - Create a server and user key
-- Use the keys create certificates
+- Use the keys to create certificates
 - Use those to create a secure channel
 
 ## Introduction
@@ -31,7 +31,7 @@ or via SSH:
 git clone git@github.com:tecnico-sec/Secure-Sockets-in-action.git
 ```
 
-Compile the code directly using the Java compiler:
+Go to that directory and compile the code directly using the Java compiler:
 
 ```bash
 javac *.java
@@ -39,7 +39,7 @@ javac *.java
 
 ## Asymmetric ciphers
 
-The goal now is to use asymmetric ciphers, with separate private and public keys. RSA is the most well known of these algorithms.
+The goal now is to use asymmetric ciphers, with separate private and public keys. RSA is going to be the algorithm that we will use, it is also the most well known algorithm to generate key pairs.
 
 #### Generating a pair of keys with OpenSSL
 
@@ -57,7 +57,7 @@ openssl genrsa -out user.key
 
 #### Generating a self-signed certificate
 
-Create a Certificate Signing Request, using same key (when asked for password use the word "password"):
+Create a Certificate Signing Request, using same key (click "enter" to everything that is asked, except when asked for "A challenge passoword[]" use the word "password"):
 
 ```bash
 openssl req -new -key server.key -out server.csr
@@ -67,6 +67,7 @@ openssl req -new -key server.key -out server.csr
 openssl req -new -key user.key -out user.csr
 ```
 
+The server will self-sign because there's no CA(Certificate Authority) yet.
 Self-sign:
 
 ```bash
@@ -79,7 +80,8 @@ For our certificate to be able to sign other certificates, OpenSSL requires that
 echo 01 > server.srl
 ```
 
-Self-sign for the user doesn't happen and is replaced by:
+The user cannot self-sign itself because there is now a CA (the server) that will sign the user.
+So it's replaced by:
 
 ```bash
 openssl x509 -req -days 365 -in user.csr -CA server.crt -CAkey server.key -out user.crt
@@ -112,10 +114,11 @@ openssl pkcs12 -export -in user.crt -inkey user.key -out user.p12
 
 #### Import the certificate
 
-Now you will add to the jks file of the user the certificate of the server so he trusts that server.
+Now you will add to the jks file of the server the certificate of the user so he trusts that user.
+jks file is the default keystore type in the Sun/Oracle Java security provider. And in this case it will store the certificates the server trusts.
 
 ```bash
-keytool -import -trustcacerts -file server.pem -keypass password -storepass password -keystore usertruststore.jks
+keytool -import -trustcacerts -file user.pem -keypass password -storepass password -keystore servertruststore.jks
 ```
 
 ## Connecting the user to the server
@@ -144,12 +147,12 @@ Now try using the correct port (you will need to restart the server):
 java -cp . User 5000
 ```
 
-The connection should fail again, what happened this time was that the certificate of the user wasn't sent to the server. If you were trying to open a website what should appear is [this](https://client-cert-missing.badssl.com/).
+The connection should fail again, what happened this time was that the certificate of the server wasn't sent to the user. If you were trying to open a website what should appear is [this](https://untrusted-root.badssl.com/).
 
-So now try adding the user certificate to the server jks so he can trust the user:
+So now try adding the server certificate to the user jks so he can trust the server:
 
 ```bash
-keytool -import -trustcacerts -file user.pem -keypass password -storepass password -keystore servertruststore.jks
+keytool -import -trustcacerts -file server.pem -keypass password -storepass password -keystore usertruststore.jks
 ```
 
 Try connecting both of them with each other using this commands.
