@@ -172,13 +172,4 @@ java -cp . User 5000
 The connection should work and messages can now be sent.
 What you should see when trying to open a website is [this](https://https-everywhere.badssl.com/).
 
-
-**Acknowledgments**
-
-Revisions: Diogo Peres Castilho, David R. Matos, Miguel Pardal, Ricardo Chaves
-
-Second Revisions: Diogo Fernandes, Guilherme Santos, Pedro Ferreira, Lucas Figueiredo, João Pereira
-
 ----
-
-[SIRS Faculty](mailto:meic-sirs@disciplinas.tecnico.ulisboa.pt)
