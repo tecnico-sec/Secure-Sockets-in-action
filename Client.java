@@ -9,7 +9,7 @@ import javax.net.SocketFactory;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 
-public class User {
+public class Client {
 
     public static void startClient(String host, int port) throws IOException {
 
@@ -34,9 +34,10 @@ public class User {
             try (Scanner scanner = new Scanner(System.in)) {
                 System.out.println("Type: 'Exit' to close the connection");
 
-                while(!line.equals("Exit")) {
+                while (!line.equals("Exit")) {
                     try {
-                        line = scanner.nextLine();;
+                        line = scanner.nextLine();
+                        ;
                         System.out.println("sending message: " + line);
                         os = new BufferedOutputStream(socket.getOutputStream());
                         os.write(line.getBytes());
@@ -62,19 +63,18 @@ public class User {
                 }
             }
 
-
         }
     }
 
     public static void main(String args[]) throws IOException {
         System.setProperty("javax.net.ssl.keyStore", "user.p12");
-        System.setProperty("javax.net.ssl.keyStorePassword", "password");
+        System.setProperty("javax.net.ssl.keyStorePassword", "changeme");
         System.setProperty("javax.net.ssl.trustStore", "usertruststore.jks");
-        System.setProperty("javax.net.ssl.trustStorePassword", "password");
-        if (args.length == 1 ) {
+        System.setProperty("javax.net.ssl.trustStorePassword", "changeme");
+        if (args.length == 1) {
             int port = Integer.parseInt(args[0]);
             startClient("localhost", port);
-        }
-        else return;
+        } else
+            return;
     }
 }

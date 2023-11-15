@@ -24,7 +24,7 @@ public class Server {
             OutputStream os = null;
             try (Socket socket = listener.accept()) {
 
-                while(!message.equals("Exit")) {
+                while (!message.equals("Exit")) {
                     try {
                         is = new BufferedInputStream(socket.getInputStream());
                         byte[] data = new byte[2048];
@@ -55,9 +55,9 @@ public class Server {
 
     public static void main(String args[]) throws IOException {
         System.setProperty("javax.net.ssl.keyStore", "server.p12");
-        System.setProperty("javax.net.ssl.keyStorePassword", "password");
+        System.setProperty("javax.net.ssl.keyStorePassword", "changeme");
         System.setProperty("javax.net.ssl.trustStore", "servertruststore.jks");
-        System.setProperty("javax.net.ssl.trustStorePassword", "password");
+        System.setProperty("javax.net.ssl.trustStorePassword", "changeme");
         startServer(5000);
     }
 }
