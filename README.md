@@ -5,7 +5,10 @@ Instituto Superior Técnico, Universidade de Lisboa
 # Lab guide: Secure Sockets in action
 
 This lab guide focuses on using an existing and robust secure sockets implementation.
-In this case, it is the implementation available in the Java platform itself.
+The protocol was originally called SSL, standing for Secure Sockets Layer.
+In most recent versions of the prototol were renamed TLS, Transport Layer Security.
+
+In this case guide, the SSL/TLS implementation used is the one available in the Java platform itself.
 The guide covers key pair generation with OpenSSL, self-signed certificate creation, and provides example code for a client and a server using TLS/SSL.
 
 The goals of the laboratory are:
@@ -168,9 +171,16 @@ What you should see when trying to open a website is [this](https://https-everyw
 
 ## Conclusion
 
-This lab guide covered secure socket communication using the Java implementation of TLS/SSL.
+This lab guide covered secure socket communication using the Java implementation of SSL/TLS.
 Participants generated RSA key pairs, created self-signed certificates, and established a communication channel.
 The approach involved OpenSSL configuration and Java code compilation.
+
+There are many other libraries that also implement the SSL/TLS protocol.
+Because the protocol has a standard specification, clients and servers using different libraries should still be able to communicate correctly.
+
+In many specific cases, applications can incorporate SSL/TLS to support a more specific protocol between its clients and servers, like a secure database access protocol, for example.
+In these cases, what should be done is to refer to the documentation of the involved tools and see how SSL/TLS can be enabled.
+Please consider the options carefully and make sure you perform a correct configuration of trusted keys and other important parameters.
 
 ----
 
