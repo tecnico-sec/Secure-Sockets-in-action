@@ -125,6 +125,8 @@ To do this we first start the server:
 java -cp . Server
 ```
 
+If you receive an exception saying ```Exception in thread "main" java.net.BindException: Address already in use```, then this means that the port 5000 is already in use on your machine. You can either shutdown the application that is making use of the port or you can change the hardcoded port 5000 in the ```Server.java``` file and recompile using ```javac```.
+
 The `cp` option specifies the *classpath*, i.e., where to look for the Java class files.
 In this case, the current directory is specified as classpath.
 
