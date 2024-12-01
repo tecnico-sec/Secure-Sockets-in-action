@@ -110,6 +110,7 @@ openssl pkcs12 -export -in user.crt -inkey user.key -out user.p12
 
 Now you will add to the jks file of the server the certificate of the user so he trusts that user.
 jks file is the default keystore type in the Sun/Oracle Java security provider. And in this case it will store the certificates the server trusts.
+If promted with "Trust this certificate? [no]:  yes", confirm by typing "yes".
 
 ```sh
 keytool -import -trustcacerts -file user.pem -keypass changeme -storepass changeme -keystore servertruststore.jks
