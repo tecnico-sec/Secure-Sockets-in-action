@@ -145,7 +145,7 @@ java -cp . Client 5000
 The connection should fail again, what happened this time was that the certificate of the server wasn't sent to the user.
 If you were trying to open a website what should appear is [this](https://untrusted-root.badssl.com/).
 
-So now try adding the server certificate to the user jks so he can trust the server:
+So now try adding the server certificate to the user jks so he can trust the server (again, if promted with "Trust this certificate? [no]:  yes", confirm by typing "yes"):
 
 ```sh
 keytool -import -trustcacerts -file server.pem -keypass changeme -storepass changeme -keystore usertruststore.jks
